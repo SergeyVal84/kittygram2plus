@@ -1,14 +1,22 @@
 from rest_framework import viewsets, permissions
 from .permissions import OwnerOrReadOnly, ReadOnly
 from .models import Achievement, Cat, User
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import AchievementSerializer, CatSerializer, UserSerializer
+
 
 
 class CatViewSet(viewsets.ModelViewSet):
     queryset = Cat.objects.all()
     serializer_class = CatSerializer
-    permission_classes = (OwnerOrReadOnly, )
+    permission_classes = (OwnerOrReadOnly,)
+    # Добавим в кортеж ещё один бэкенд
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    pagination_class = None
+    filterset_fields = ('color', 'birth_year')
+    search_fields = ('name',) 
     
 
     def perform_create(self, serializer):
